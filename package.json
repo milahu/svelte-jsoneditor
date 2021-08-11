@@ -3,7 +3,7 @@
   "description": "A web-based tool to view, edit, format, transform, and validate JSON",
   "version": "0.2.7",
   "type": "module",
-  "svelte": "index.js",
+  "svelte": "index-svelte.js",
   "module": "dist/jsoneditor.js",
   "main": "dist/jsoneditor.js",
   "repository": {

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createAjvValidator, JSONEditor } from '$lib'
+  import { createAjvValidator, JSONEditor } from '$lib/index-svelte'
   import { useLocalStorage } from '$lib/utils/localStorageUtils.js'
   import { range } from 'lodash-es'
 

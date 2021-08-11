@@ -7,17 +7,17 @@ import svelte from 'rollup-plugin-svelte'
 import { terser } from 'rollup-plugin-terser'
 import sveltePreprocess from 'svelte-preprocess'
 import pkg from './package.json'
-import { addBundleExports } from './tools/addBundleExports.js'
+import { addBundleExports, addIndexFile } from './tools/addBundleExports.js'
 
 const production = !process.env.ROLLUP_WATCH
 const packageFolder = 'package'
 const file = path.join(packageFolder, pkg.module)
-const sourcemapFile = file + '.map'
 
-addBundleExports(packageFolder, file, sourcemapFile)
+addIndexFile(packageFolder)
+addBundleExports(packageFolder)
 
 export default {
-  input: 'src/lib/index.js',
+  input: 'src/lib/index-svelte.js',
   output: [
     {
       file,
