@@ -11,7 +11,7 @@ mkdir $srcdir
 npm run build
 
 # move all files except $srcdir and .git
-find . -mindepth 1 -maxdepth 1 -not '(' -name "$srcdir" -or .git ')' -exec mv -t "$srcdir" '{}' ';'
+find . -mindepth 1 -maxdepth 1 '(' -not -name "$srcdir" -and -not -name .git ')' -exec mv -t "$srcdir" '{}' ';'
 
 # move package files back
 find "$srcdir/$pkgdir" -mindepth 1 -maxdepth 1 -exec mv -t ./ '{}' ';'
