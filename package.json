@@ -25,7 +25,7 @@
     "lint": "prettier --check --plugin-search-dir=. .",
     "__lint": "prettier --check --plugin-search-dir=. . && eslint --cache --ignore-path .gitignore .",
     "format": "prettier --write --plugin-search-dir=. .",
-    "prepare": "sh prepare.sh",
+    "prepare": "sh svelte.prepare.sh",
     "prepare__broken": "npm run build && mkdir .src && shopt -s dotglob && ( mv * .src/ || true ) ( mv .src/.git ./ || true ) && mv .src/package/* ./ && rmdir .src/package",
     "release": "npm run lint && npm test && standard-version && npm run package && git push && git push --tag && npm publish package/"
   },
