@@ -6,7 +6,16 @@ srcdir=.src
 set -e # throw on error
 set -o xtrace # print commands
 
-mkdir $srcdir
+if [ -d "$srcdir" ]
+then
+  if ! (rmdir "$srcdir") # remove empty srcdir
+  then
+    echo "error: srcdir $srcdir is not empty"
+    exit 1
+  fi
+fi
+
+mkdir "$srcdir"
 
 npm run build
 
