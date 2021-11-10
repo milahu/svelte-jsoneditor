@@ -14,7 +14,8 @@
   "scripts": {
     "dev": "svelte-kit dev",
     "preview": "svelte-kit preview",
-    "build": "npm run package",
+    "build": "npm run build:worker-json-data-url && npm run package",
+    "build:worker-json-data-url": "husky install && cd tools && node generateEmbeddedAceJsonWorker.js && cd ..",
     "build:watch": "npm run package -- --watch",
     "package": "svelte-kit package && rollup --config rollup.config.bundle.js",
     "test": "mocha",
@@ -24,7 +25,6 @@
     "__lint": "prettier --check --plugin-search-dir=. . && eslint --cache --ignore-path .gitignore .",
     "format": "prettier --write --plugin-search-dir=. .",
     "prepare": "npm run build && mkdir .src && mv * .src/ && mv .src/package/* ./ && rmdir .src/package",
-    "prepare__old": "husky install && cd tools && node generateEmbeddedAceJsonWorker.js && cd ..",
     "release": "npm run lint && npm test && standard-version && npm run package && git push && git push --tag && npm publish package/"
   },
   "dependencies": {
