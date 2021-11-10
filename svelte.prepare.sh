@@ -4,13 +4,16 @@ pkgdir=package # svelte.config.js: kit.package.dir
 srcdir=.src
 
 set -e # throw on error
-shopt -s dotglob # also move hidden files
-shopt -s extglob # move by regex
 set -o xtrace # print commands
 
 mkdir $srcdir
+
 npm run build
-mv !($srcdir|.git) $srcdir/ # move all except $srcdir and .git
-#[ -d $srcdir/.git ] && mv $srcdir/.git ./ # restore git
-mv $srcdir/$pkgdir/* ./
-rmdir $srcdir/$pkgdir
+
+# move all files except $srcdir and .git
+find . -mindepth 1 -maxdepth 1 -not '(' -name "$srcdir" -or .git ')' -exec mv -t "$srcdir" '{}' ';'
+
+# move package files back
+find "$srcdir/$pkgdir" -mindepth 1 -maxdepth 1 -exec mv -t ./ '{}' ';'
+
+rmdir "$srcdir/$pkgdir"
