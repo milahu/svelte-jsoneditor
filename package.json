@@ -24,7 +24,8 @@
     "lint:prettier": "prettier --check --plugin-search-dir=. .",
     "lint:eslint": "eslint --cache --ignore-path .gitignore .",
     "format": "prettier --write --plugin-search-dir=. .",
-    "prepare": "husky install && cd tools && node generateDiffSequenceEsm.js && cd ..",
+    "prepare": "( cd tools && node generateDiffSequenceEsm.js ) && npm run build && ./scripts/svelte-kit-move-package.mjs",
+    "install-git-hooks": "husky install",
     "release": "npm run lint && npm test && standard-version && npm run package && git push && git push --tag && npm publish package/"
   },
   "dependencies": {
