@@ -1,28 +1,55 @@
-#!/bin/sh
+#!/usr/bin/env node
 
-pkgdir=package # svelte.config.js: kit.package.dir
-srcdir=.src
+import fs from 'fs';
+import child_process from 'child_process';
 
-set -e # throw on error
-set -o xtrace # print commands
 
-if [ -d "$srcdir" ]
-then
-  if ! (rmdir "$srcdir") # remove empty srcdir
-  then
-    echo "error: srcdir $srcdir is not empty"
-    exit 1
-  fi
-fi
 
-mkdir "$srcdir"
+const buildCommand = 'npm run build';
+const svelteConfigPath = './svelte.config.js';
+let pkgdir = 'package'; // default value
+const ignoreFiles = ['.git'];
 
-npm run build
 
-# move all files except $srcdir and .git
-find . -mindepth 1 -maxdepth 1 '(' -not -name "$srcdir" -and -not -name .git ')' -exec mv -t "$srcdir" '{}' ';'
 
-# move package files back
-find "$srcdir/$pkgdir" -mindepth 1 -maxdepth 1 -exec mv -t ./ '{}' ';'
+async function svelteKitPrepare() {
 
-rmdir "$srcdir/$pkgdir"
+  console.log(buildCommand);
+  child_process.execSync(buildCommand, { stdio: 'inherit', windowsHide: true });
+
+  const srcdir = fs.mkdtempSync('src-of-svelte-kit-');
+  ignoreFiles.push(srcdir);
+
+  console.log(`move all files to ${srcdir}, except ${ignoreFiles.join(' ')}`);
+  const ignoreFilesSet = new Set(ignoreFiles);
+  for (const filename of fs.readdirSync('.')) {
+    if (ignoreFilesSet.has(filename)) {
+      console.log(`ignore ${filename}`);
+      continue;
+    }
+    console.log(`mv -t ${srcdir}/ ${filename}`);
+    fs.renameSync(filename, `${srcdir}/${filename}`);
+  }
+
+  // get custom pkgdir
+  if (fs.existsSync(svelteConfigPath)) {
+    console.log(`import ${svelteConfigPath}`)
+    const svelteConfig = await import(svelteConfigPath);
+    if (svelteConfig.kit?.package?.dir) {
+      pkgdir = svelteConfig.kit.package.dir; // custom value
+    }
+  }
+
+  // move package files back
+  for (const filename of fs.readdirSync(`${srcdir}/${pkgdir}`)) {
+    console.log(`mv -t ./ ${filename}`);
+    fs.renameSync(`${srcdir}/${pkgdir}/${filename}`, filename);
+  }
+
+  console.log(`rmdir ${srcdir}/${pkgdir}`)
+  fs.rmdirSync(`${srcdir}/${pkgdir}`); // pkgdir should be empty
+}
+
+
+
+svelteKitPrepare();
